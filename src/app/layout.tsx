@@ -31,19 +31,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-neutral-50 text-neutral-900">
-        <header className="border-b border-neutral-200 bg-white">
-          <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <header className="border-b border-border bg-surface">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
             <Link href="/pipeline" className="font-semibold tracking-tight">
               Career Search Tracker
             </Link>
             <nav className="flex gap-4 text-sm">
               {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-neutral-600 hover:text-neutral-900"
-                >
+                <Link key={link.href} href={link.href} className="text-muted hover:text-foreground">
                   {link.label}
                 </Link>
               ))}

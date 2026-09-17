@@ -25,18 +25,18 @@ const STAGE_LABELS: Record<Stage, string> = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-800",
-  STALLED: "bg-amber-100 text-amber-800",
-  PASSED: "bg-neutral-200 text-neutral-600",
-  WITHDRAWN: "bg-neutral-200 text-neutral-600",
-  CLOSED_WON: "bg-emerald-100 text-emerald-800",
-  CLOSED_LOST: "bg-neutral-200 text-neutral-600",
+  ACTIVE: "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/10 dark:text-emerald-300",
+  STALLED: "bg-amber-100 text-amber-800 dark:bg-amber-400/10 dark:text-amber-300",
+  PASSED: "bg-surface-muted text-muted",
+  WITHDRAWN: "bg-surface-muted text-muted",
+  CLOSED_WON: "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/10 dark:text-emerald-300",
+  CLOSED_LOST: "bg-surface-muted text-muted",
 };
 
 const RECOMMENDATION_STYLES: Record<string, string> = {
-  PURSUE: "bg-blue-100 text-blue-800",
-  PASS: "bg-rose-100 text-rose-800",
-  UNSCORED: "bg-neutral-100 text-neutral-500",
+  PURSUE: "bg-blue-100 text-blue-800 dark:bg-blue-400/10 dark:text-blue-300",
+  PASS: "bg-rose-100 text-rose-800 dark:bg-rose-400/10 dark:text-rose-300",
+  UNSCORED: "bg-surface-muted text-subtle",
 };
 
 export default async function PipelinePage() {
@@ -54,26 +54,27 @@ export default async function PipelinePage() {
   return (
     <div>
       <h1 className="mb-4 text-xl font-semibold">Pipeline</h1>
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex flex-col gap-6 sm:flex-row sm:gap-4 sm:overflow-x-auto sm:pb-4">
         {STAGE_ORDER.map((stage) => {
           const items = byStage.get(stage) ?? [];
           return (
-            <div key={stage} className="w-72 shrink-0">
+            <div
+              key={stage}
+              className={`w-full sm:w-72 sm:shrink-0 ${items.length === 0 ? "hidden sm:block" : ""}`}
+            >
               <div className="mb-2 flex items-center justify-between px-1">
-                <h2 className="text-sm font-medium text-neutral-700">
-                  {STAGE_LABELS[stage]}
-                </h2>
-                <span className="text-xs text-neutral-400">{items.length}</span>
+                <h2 className="text-sm font-medium text-muted">{STAGE_LABELS[stage]}</h2>
+                <span className="text-xs text-subtle">{items.length}</span>
               </div>
               <div className="flex flex-col gap-2">
                 {items.map((opp) => (
                   <Link
                     key={opp.id}
                     href={`/pipeline/${opp.id}`}
-                    className="block rounded-lg border border-neutral-200 bg-white p-3 shadow-sm hover:border-neutral-300"
+                    className="block rounded-lg border border-border bg-surface p-3 shadow-sm hover:border-border-strong"
                   >
                     <div className="font-medium">{opp.company}</div>
-                    <div className="text-sm text-neutral-600">{opp.role}</div>
+                    <div className="text-sm text-muted">{opp.role}</div>
                     <div className="mt-2 flex flex-wrap gap-1">
                       <span
                         className={`rounded px-1.5 py-0.5 text-xs ${STATUS_STYLES[opp.status] ?? ""}`}
@@ -87,7 +88,7 @@ export default async function PipelinePage() {
                       </span>
                     </div>
                     {opp.nextAction && (
-                      <div className="mt-2 text-xs text-neutral-500">
+                      <div className="mt-2 text-xs text-subtle">
                         Next: {opp.nextAction}
                         {opp.nextActionOwner && ` (${opp.nextActionOwner.toLowerCase()})`}
                       </div>
@@ -95,7 +96,7 @@ export default async function PipelinePage() {
                   </Link>
                 ))}
                 {items.length === 0 && (
-                  <div className="rounded-lg border border-dashed border-neutral-200 p-3 text-center text-xs text-neutral-400">
+                  <div className="rounded-lg border border-dashed border-border p-3 text-center text-xs text-subtle">
                     empty
                   </div>
                 )}

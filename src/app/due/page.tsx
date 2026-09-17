@@ -30,8 +30,8 @@ export default async function DuePage() {
     <div className="max-w-2xl">
       <h1 className="mb-4 text-xl font-semibold">Due</h1>
 
-      <h2 className="text-sm font-medium text-neutral-700">Cadence overdue</h2>
-      <p className="mb-2 text-xs text-neutral-400">
+      <h2 className="text-sm font-medium text-muted">Cadence overdue</h2>
+      <p className="mb-2 text-xs text-subtle">
         Computed automatically from each contact&apos;s cadence tier and last touch date.
       </p>
       <ul className="space-y-2">
@@ -39,36 +39,38 @@ export default async function DuePage() {
           <li key={contact.id}>
             <Link
               href={`/contacts/${contact.id}`}
-              className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm hover:border-amber-300"
+              className="flex flex-wrap items-center justify-between gap-1 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm hover:border-amber-300 dark:border-amber-400/20 dark:bg-amber-400/10"
             >
               <span>
                 <span className="font-medium">{contact.name}</span>
-                <span className="ml-2 text-neutral-500">
-                  {CADENCE_LABELS[contact.cadenceTier]} cadence
-                </span>
+                <span className="ml-2 text-muted">{CADENCE_LABELS[contact.cadenceTier]} cadence</span>
               </span>
-              <span className="text-amber-800">{since}d since last touch</span>
+              <span className="text-amber-800 dark:text-amber-300">
+                {since === null ? "never touched" : `${since}d since last touch`}
+              </span>
             </Link>
           </li>
         ))}
-        {overdueContacts.length === 0 && (
-          <p className="text-sm text-neutral-400">Nobody is overdue right now.</p>
-        )}
+        {overdueContacts.length === 0 && <p className="text-sm text-subtle">Nobody is overdue right now.</p>}
       </ul>
 
-      <h2 className="mt-6 text-sm font-medium text-neutral-700">Action items</h2>
+      <h2 className="mt-6 text-sm font-medium text-muted">Action items</h2>
       <ul className="mt-2 space-y-2">
         {actionItems.map((item) => {
           const overdue = item.dueDate < today;
           return (
             <li
               key={item.id}
-              className={`rounded-lg border p-3 text-sm ${overdue ? "border-rose-200 bg-rose-50" : "border-neutral-200 bg-white"}`}
+              className={`rounded-lg border p-3 text-sm ${
+                overdue
+                  ? "border-rose-200 bg-rose-50 dark:border-rose-400/20 dark:bg-rose-400/10"
+                  : "border-border bg-surface"
+              }`}
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="font-medium">{item.title}</p>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-muted">
                     due {item.dueDate.toISOString().slice(0, 10)}
                     {item.opportunity && (
                       <>
@@ -88,18 +90,18 @@ export default async function DuePage() {
                     )}
                   </p>
                 </div>
-                <div className="flex shrink-0 gap-1">
+                <div className="flex shrink-0 gap-1.5">
                   <form action={setActionItemStatusAction}>
                     <input type="hidden" name="id" value={item.id} />
                     <input type="hidden" name="status" value="DONE" />
-                    <button className="rounded border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100">
+                    <button className="rounded border border-border-strong px-2.5 py-1.5 text-xs hover:bg-surface-muted">
                       done
                     </button>
                   </form>
                   <form action={setActionItemStatusAction}>
                     <input type="hidden" name="id" value={item.id} />
                     <input type="hidden" name="status" value="DISMISSED" />
-                    <button className="rounded border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100">
+                    <button className="rounded border border-border-strong px-2.5 py-1.5 text-xs hover:bg-surface-muted">
                       dismiss
                     </button>
                   </form>
@@ -108,7 +110,7 @@ export default async function DuePage() {
             </li>
           );
         })}
-        {actionItems.length === 0 && <p className="text-sm text-neutral-400">No open action items.</p>}
+        {actionItems.length === 0 && <p className="text-sm text-subtle">No open action items.</p>}
       </ul>
     </div>
   );

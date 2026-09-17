@@ -1,0 +1,194 @@
+// Career Search Tracker — schema
+// See PRD.md for the data model this implements.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ContactType {
+  RECRUITER
+  NETWORK
+  COMPANY_SIDE
+}
+
+enum WarmthTier {
+  HOT
+  WARM
+  COOL
+  COLD
+}
+
+enum CadenceTier {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+}
+
+enum Stage {
+  LEAD
+  CONTACTED
+  SCREEN
+  INTERVIEWING
+  FINAL
+  OFFER
+  CLOSED
+}
+
+enum OpportunityStatus {
+  ACTIVE
+  STALLED
+  PASSED
+  WITHDRAWN
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum ActionOwner {
+  BEN
+  THEM
+}
+
+enum TouchDirection {
+  BEN_OWES
+  THEY_OWE
+  FYI
+}
+
+enum ActionItemKind {
+  DERIVED
+  MANUAL
+}
+
+enum ActionItemStatus {
+  OPEN
+  DONE
+  DISMISSED
+}
+
+enum Recommendation {
+  PURSUE
+  PASS
+  UNSCORED
+}
+
+model Contact {
+  id            String      @id @default(cuid())
+  name          String
+  firm          String?
+  type          ContactType
+  warmthTier    WarmthTier
+  cadenceTier   CadenceTier
+  lastTouchDate DateTime?
+  notes         String?
+
+  opportunities Opportunity[]
+  threads       Thread[]
+  actionItems   ActionItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Opportunity {
+  id     String @id @default(cuid())
+  company String
+  role    String
+
+  stage  Stage             @default(LEAD)
+  status OpportunityStatus @default(ACTIVE)
+
+  sourceContactId String?
+  source          Contact? @relation(fields: [sourceContactId], references: [id])
+
+  nextAction      String?
+  nextActionOwner ActionOwner?
+  lastTouchDate   DateTime?
+  notes           String?
+
+  // Scoring — config-driven, versioned. See ScoringModel.
+  scoringModelVersion Int?
+  scoringModel        ScoringModel?   @relation(fields: [scoringModelVersion], references: [version])
+  criterionScores     Json? // [{ name, weight, scale, value }]
+  redFlagsTriggered   Json? // [name, ...]
+  computedScore       Float?
+  recommendation      Recommendation @default(UNSCORED)
+
+  threads     Thread[]
+  actionItems ActionItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// A Thread links one Contact to zero-or-one Opportunity and holds the touch
+// history between them. A contact can have a general (non-opportunity)
+// thread, e.g. pure networking, or one thread per opportunity they source.
+model Thread {
+  id String @id @default(cuid())
+
+  contactId String
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  opportunityId String?
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  touches Touch[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([contactId])
+  @@index([opportunityId])
+}
+
+model Touch {
+  id       String @id @default(cuid())
+  threadId String
+  thread   Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  date      DateTime
+  summary   String
+  direction TouchDirection
+
+  createdAt DateTime @default(now())
+
+  @@index([threadId])
+}
+
+model ActionItem {
+  id   String         @id @default(cuid())
+  kind ActionItemKind @default(MANUAL)
+
+  title   String
+  dueDate DateTime
+  status  ActionItemStatus @default(OPEN)
+
+  opportunityId String?
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dueDate])
+  @@index([opportunityId])
+  @@index([contactId])
+}
+
+model ScoringModel {
+  version    Int      @id
+  criteria   Json // [{ name, weight, scale }]
+  redFlags   Json // [{ name, overrideBehavior }]
+  isCurrent  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  opportunities Opportunity[]
+}

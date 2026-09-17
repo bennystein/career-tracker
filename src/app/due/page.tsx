@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { isOverdue, daysSince, dueDateFor } from "@/lib/cadence";
+import { isOverdue, daysSince, dueDateFor, CADENCE_LABELS } from "@/lib/cadence";
 import { setActionItemStatusAction } from "@/app/add/actions";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +44,7 @@ export default async function DuePage() {
               <span>
                 <span className="font-medium">{contact.name}</span>
                 <span className="ml-2 text-neutral-500">
-                  {contact.cadenceTier.toLowerCase()} cadence
+                  {CADENCE_LABELS[contact.cadenceTier]} cadence
                 </span>
               </span>
               <span className="text-amber-800">{since}d since last touch</span>

@@ -1,10 +1,18 @@
 import type { CadenceTier } from "@/generated/prisma/enums";
 
+// THREE_DAYS approximates "3 business days" as 4 calendar days, splitting
+// the difference between a same-week touch (3 days) and one spanning a
+// weekend (5 days), rather than pulling in a business-day calendar for v1.
 const CADENCE_DAYS: Record<CadenceTier, number> = {
-  WEEKLY: 7,
-  BIWEEKLY: 14,
-  MONTHLY: 30,
-  QUARTERLY: 90,
+  THREE_DAYS: 4,
+  TWO_WEEKS: 14,
+  FOUR_WEEKS: 28,
+};
+
+export const CADENCE_LABELS: Record<CadenceTier, string> = {
+  THREE_DAYS: "3 business days",
+  TWO_WEEKS: "2 weeks",
+  FOUR_WEEKS: "4 weeks",
 };
 
 export function cadenceDays(tier: CadenceTier): number {

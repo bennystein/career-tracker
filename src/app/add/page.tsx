@@ -30,15 +30,13 @@ export default async function QuickAddPage() {
             <select name="warmthTier" required className="w-full rounded border border-neutral-300 p-1.5">
               <option value="HOT">Hot</option>
               <option value="WARM">Warm</option>
-              <option value="COOL">Cool</option>
               <option value="COLD">Cold</option>
             </select>
           </div>
           <select name="cadenceTier" required className="w-full rounded border border-neutral-300 p-1.5">
-            <option value="WEEKLY">Weekly</option>
-            <option value="BIWEEKLY">Biweekly</option>
-            <option value="MONTHLY">Monthly</option>
-            <option value="QUARTERLY">Quarterly</option>
+            <option value="THREE_DAYS">3 business days (hot)</option>
+            <option value="TWO_WEEKS">2 weeks (warm)</option>
+            <option value="FOUR_WEEKS">4 weeks (cold)</option>
           </select>
           <textarea name="notes" placeholder="Notes" className="w-full rounded border border-neutral-300 p-1.5" />
           <button className="rounded bg-neutral-900 px-3 py-1.5 text-white hover:bg-neutral-700">

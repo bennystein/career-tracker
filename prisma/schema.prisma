@@ -19,15 +19,13 @@ enum ContactType {
 enum WarmthTier {
   HOT
   WARM
-  COOL
   COLD
 }
 
 enum CadenceTier {
-  WEEKLY
-  BIWEEKLY
-  MONTHLY
-  QUARTERLY
+  THREE_DAYS
+  TWO_WEEKS
+  FOUR_WEEKS
 }
 
 enum Stage {

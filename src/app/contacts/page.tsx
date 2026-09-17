@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { isOverdue } from "@/lib/cadence";
+import { isOverdue, CADENCE_LABELS } from "@/lib/cadence";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,7 @@ export default async function ContactsPage() {
                   </td>
                   <td className="px-3 py-2 text-neutral-600">{c.type.replace("_", " ").toLowerCase()}</td>
                   <td className="px-3 py-2 text-neutral-600">{c.warmthTier.toLowerCase()}</td>
-                  <td className="px-3 py-2 text-neutral-600">{c.cadenceTier.toLowerCase()}</td>
+                  <td className="px-3 py-2 text-neutral-600">{CADENCE_LABELS[c.cadenceTier]}</td>
                   <td className="px-3 py-2 text-neutral-600">
                     {c.lastTouchDate ? c.lastTouchDate.toISOString().slice(0, 10) : "never"}
                   </td>

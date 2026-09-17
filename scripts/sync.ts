@@ -21,6 +21,7 @@
  * best-effort name match ("Dana Whitfield", "Brightline Robotics", or
  * "Brightline Robotics / VP Operations").
  */
+import "dotenv/config";
 import { prisma } from "../src/lib/prisma";
 import * as mutations from "../src/lib/mutations";
 
